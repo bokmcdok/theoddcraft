@@ -1,5 +1,6 @@
 package deuscraft.oak;
 
+import java.util.HashSet;
 import java.util.Random;
 
 import net.minecraft.world.World;
@@ -14,9 +15,20 @@ public class StructureGenerator implements IWorldGenerator
 	//	Construction
 	//--------------------------------------------------------------------------
 	
-	public StructureGenerator()
+	public StructureGenerator(int spawnRate, String oakShrineBiomes[], String oakTempleBiomes[])
 	{
-        this.worldGeneratorTrees = new WorldGenTrees(false, 5, 0, 0, false);		
+        mWorldGeneratorTrees = new WorldGenTrees(false, 5, 0, 0, false);	
+        mSpawnRate = spawnRate;
+        
+        for(String biome : oakShrineBiomes)
+        {
+        	mOakShrineBiomes.add(biome);
+        }
+        
+        for(String biome : oakTempleBiomes)
+        {
+        	mOakTempleBiomes.add(biome);
+        }
 	}
 
 	//--------------------------------------------------------------------------
@@ -27,7 +39,7 @@ public class StructureGenerator implements IWorldGenerator
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
 	{        
-		if(random.nextInt(192) == 0)
+		if(random.nextInt(mSpawnRate) == 0)
 		{
 			int x = chunkX * 16 + random.nextInt(16);
 			int z = chunkZ * 16 + random.nextInt(16);
@@ -35,16 +47,13 @@ public class StructureGenerator implements IWorldGenerator
 			BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
 			
 			//	Plains, Extreme Hills and Swampland
-			if(biome.biomeID == 1 ||
-			   biome.biomeID == 3 ||
-			   biome.biomeID == 6)
+			if(mOakShrineBiomes.contains(biome.biomeName))
 			{
 				generateOakShrine(random, x, z, world);
 			}	
 			
 			//	Forest and Forest Hills only.
-			else if(biome.biomeID == 4 ||
-					biome.biomeID == 18)
+			else if(mOakTempleBiomes.contains(biome.biomeName))
 			{
 				if(random.nextInt(2) == 0)
 				{
@@ -183,7 +192,7 @@ public class StructureGenerator implements IWorldGenerator
 	{
 		int y = world.getTopSolidOrLiquidBlock(x, z);
 		world.setBlock(x, y, z, 0);
-		worldGeneratorTrees.generate(world, random, x, y, z);		
+		mWorldGeneratorTrees.generate(world, random, x, y, z);		
 	}
 	
 
@@ -363,5 +372,10 @@ public class StructureGenerator implements IWorldGenerator
 	}
 	
 	//	Our tree generator
-    protected WorldGenTrees worldGeneratorTrees;
+	private WorldGenTrees mWorldGeneratorTrees;
+	
+	private HashSet<String> mOakShrineBiomes = new HashSet<String>();
+	private HashSet<String> mOakTempleBiomes = new HashSet<String>();
+    
+    private int mSpawnRate;
 }

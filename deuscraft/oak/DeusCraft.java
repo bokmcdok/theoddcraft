@@ -20,6 +20,7 @@ import cpw.mods.fml.common.event.FMLPreInitializationEvent;
 import cpw.mods.fml.common.network.NetworkMod;
 import cpw.mods.fml.common.registry.GameRegistry;
 import cpw.mods.fml.common.registry.LanguageRegistry;
+import net.minecraftforge.common.Configuration;
 
 @Mod(modid="DeusCraft", name="Deus Craft", version="0.0.0")
 @NetworkMod(clientSideRequired=true, serverSideRequired=false)
@@ -38,6 +39,19 @@ public class DeusCraft
 	@PreInit
 	public void preInit(FMLPreInitializationEvent event)
 	{
+		Configuration config = new Configuration(event.getSuggestedConfigurationFile());
+		config.load();
+
+		String oakShrineBiomes[] = {"Plains", "Extreme Hills", "Swampland"};
+		String oakTempleBiomes[] = {"Forest", "ForestHills"};
+		
+		oakShrineBiomes = config.get("Structure", "OakShrineBiomes", oakShrineBiomes).getStringList();
+		oakTempleBiomes = config.get("Structure", "OakTempleBiomes", oakTempleBiomes).getStringList();
+		
+		int structureSpawnRate = config.get("Structure", "SpawnRate", 81).getInt();
+		mStructureGenerator = new StructureGenerator(structureSpawnRate, oakShrineBiomes, oakTempleBiomes);
+		
+		config.save();
 	}
 
 	//------------------------------------------------------------------------------
@@ -59,5 +73,5 @@ public class DeusCraft
 	{
 	}
 	
-	public static StructureGenerator mStructureGenerator = new StructureGenerator();
+	public static StructureGenerator mStructureGenerator;
 }
