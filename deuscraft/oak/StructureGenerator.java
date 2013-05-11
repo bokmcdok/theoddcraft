@@ -35,33 +35,36 @@ public class StructureGenerator implements IWorldGenerator
 	//	Generate
 	//		Effectively the entry point for the structure generation.
 	//--------------------------------------------------------------------------
-	
+
 	@Override
 	public void generate(Random random, int chunkX, int chunkZ, World world, IChunkProvider chunkGenerator, IChunkProvider chunkProvider)
 	{        
-		if(random.nextInt(mSpawnRate) == 0)
+		mRandom = random;
+		mWorld = world;
+		
+		if(mRandom.nextInt(mSpawnRate) == 0)
 		{
-			int x = chunkX * 16 + random.nextInt(16);
-			int z = chunkZ * 16 + random.nextInt(16);
+			int x = chunkX * 16 + mRandom.nextInt(16);
+			int z = chunkZ * 16 + mRandom.nextInt(16);
 			
-			BiomeGenBase biome = world.getBiomeGenForCoords(x, z);
+			BiomeGenBase biome = mWorld.getBiomeGenForCoords(x, z);
 			
 			//	Plains, Extreme Hills and Swampland
 			if(mOakShrineBiomes.contains(biome.biomeName))
 			{
-				generateOakShrine(random, x, z, world);
+				generateOakShrine(x, z);
 			}	
 			
 			//	Forest and Forest Hills only.
 			else if(mOakTempleBiomes.contains(biome.biomeName))
 			{
-				if(random.nextInt(2) == 0)
+				if(mRandom.nextInt(2) == 0)
 				{
-					generateOakShrine(random, x, z, world);
+					generateOakShrine(x, z);
 				}
 				else
 				{
-					generateOakTemple(random, x, z, world);
+					generateOakTemple(x, z);
 				}
 			}
 		}
@@ -69,27 +72,27 @@ public class StructureGenerator implements IWorldGenerator
 	
 	//--------------------------------------------------------------------------
 	//	Generate Random Stone
-	//		A 50/50 chance that a random stone will be generated.  Hopefully 
-	//		this gives the stone circles a random and 'ruined' look.
+	//		A 50/50 chance that a mRandom stone will be generated.  Hopefully 
+	//		this gives the stone circles a mRandom and 'ruined' look.
 	//--------------------------------------------------------------------------
 	
-	void generateRandomStone(Random random, World world, int x, int z)
+	void generateRandomStone(int x, int z)
 	{
-		if(random.nextInt(2) == 1)
+		if(mRandom.nextInt(2) == 1)
 		{
-			int y = world.getTopSolidOrLiquidBlock(x, z) - 1;
+			int y = mWorld.getTopSolidOrLiquidBlock(x, z) - 1;
 			
 			//	Ice will cause these to generate on the surface of frozen lakes,
 			//	which looks terrible (Ice blockId is 79).
 			while(y > 0 &&
-				  (world.getBlockId(x, y, z) == 79 ||
-				   world.getBlockId(x, y, z) == 8 ||
-				   world.getBlockId(x, y, z) == 9))
+				  (mWorld.getBlockId(x, y, z) == 79 ||
+				   mWorld.getBlockId(x, y, z) == 8 ||
+				   mWorld.getBlockId(x, y, z) == 9))
 			{
 				--y;
 			}
 			
-			world.setBlock( x, y, z, 48);
+			mWorld.setBlock( x, y, z, 48);
 		}
 	}
 	
@@ -98,50 +101,17 @@ public class StructureGenerator implements IWorldGenerator
 	//		Generates a broken stone circle at ground level.
 	//--------------------------------------------------------------------------
 
-	void generateStoneCircle(Random random, int x, int z, World world)
+	void generateStoneCircle(int x, int z)
 	{
-		clearTrees(x, z, 10, world);		
+		clearTrees(x, z, 10);
 		
-		generateRandomStone(random, world, x - 7, z + 0);
-		generateRandomStone(random, world, x - 7, z - 1);
-		generateRandomStone(random, world, x - 7, z - 2);
-		generateRandomStone(random, world, x - 6, z - 3);
-		generateRandomStone(random, world, x - 6, z - 4);
-		generateRandomStone(random, world, x - 5, z - 5);
-		generateRandomStone(random, world, x - 4, z - 6);
-		generateRandomStone(random, world, x - 3, z - 6);
-		generateRandomStone(random, world, x - 2, z - 7);	
-		generateRandomStone(random, world, x - 1, z - 7);
-		generateRandomStone(random, world, x + 0, z - 7);
-		generateRandomStone(random, world, x + 1, z - 7);
-		generateRandomStone(random, world, x + 2, z - 7);
-		generateRandomStone(random, world, x + 3, z - 6);
-		generateRandomStone(random, world, x + 4, z - 6);
-		generateRandomStone(random, world, x + 5, z - 5);
-		generateRandomStone(random, world, x + 6, z - 4);
-		generateRandomStone(random, world, x + 6, z - 3);
-		generateRandomStone(random, world, x + 7, z - 2);
-		generateRandomStone(random, world, x + 7, z - 1);
-		generateRandomStone(random, world, x + 7, z + 0);
-		generateRandomStone(random, world, x - 7, z + 1);
-		generateRandomStone(random, world, x - 7, z + 2);
-		generateRandomStone(random, world, x - 6, z + 3);
-		generateRandomStone(random, world, x - 6, z + 4);
-		generateRandomStone(random, world, x - 5, z + 5);
-		generateRandomStone(random, world, x - 4, z + 6);
-		generateRandomStone(random, world, x - 3, z + 6);
-		generateRandomStone(random, world, x - 2, z + 7);	
-		generateRandomStone(random, world, x - 1, z + 7);
-		generateRandomStone(random, world, x + 0, z + 7);
-		generateRandomStone(random, world, x + 1, z + 7);
-		generateRandomStone(random, world, x + 2, z + 7);
-		generateRandomStone(random, world, x + 3, z + 6);
-		generateRandomStone(random, world, x + 4, z + 6);
-		generateRandomStone(random, world, x + 5, z + 5);
-		generateRandomStone(random, world, x + 6, z + 4);
-		generateRandomStone(random, world, x + 6, z + 3);
-		generateRandomStone(random, world, x + 7, z + 2);
-		generateRandomStone(random, world, x + 7, z + 1);
+		Circle.generate(x, z, 7, new GenerateBlock() 
+		{ 
+			public void Call(int x1, int z1) 
+			{ 
+				generateRandomStone(x1, z1 ); 
+			}
+		});
 	}
 
 	//--------------------------------------------------------------------------
@@ -149,38 +119,23 @@ public class StructureGenerator implements IWorldGenerator
 	//		Generates a large circle of trees in a clearing
 	//--------------------------------------------------------------------------
 	
-	void generateTreeCircle(Random random, int x, int z, World world)
+	void generateTreeCircle(int x, int z)
 	{
-		clearTrees(x, z, 15, world);
+		clearTrees(x, z, 15);
 
-		generateTree(random, x - 10, z, world);
-		generateTree(random, x - 10, z - 2, world);
-		generateTree(random, x - 9, z - 4, world);
-		generateTree(random, x - 8, z - 6, world);
-		generateTree(random, x - 6, z - 8, world);
-		generateTree(random, x - 4, z - 9, world);
-		generateTree(random, x - 2, z - 10, world);
-		generateTree(random, x, z - 10, world);
-		generateTree(random, x + 2, z - 10, world);
-		generateTree(random, x + 4, z - 9, world);
-		generateTree(random, x + 6, z - 8, world);
-		generateTree(random, x + 8, z - 6, world);
-		generateTree(random, x + 9, z - 4, world);
-		generateTree(random, x + 10, z - 2, world);
-		generateTree(random, x + 10, z, world);
-		generateTree(random, x - 10, z + 2, world);
-		generateTree(random, x - 9, z + 4, world);
-		generateTree(random, x - 8, z + 6, world);
-		generateTree(random, x - 6, z + 8, world);
-		generateTree(random, x - 4, z + 9, world);
-		generateTree(random, x - 2, z + 10, world);
-		generateTree(random, x, z + 10, world);
-		generateTree(random, x + 2, z + 10, world);
-		generateTree(random, x + 4, z + 9, world);
-		generateTree(random, x + 6, z + 8, world);
-		generateTree(random, x + 8, z + 6, world);
-		generateTree(random, x + 9, z + 4, world);
-		generateTree(random, x + 10, z + 2, world);
+		Circle.generate(x, z, 10, new GenerateBlock() 
+		{ 
+			private boolean mShouldGenerate = false;
+			public void Call(int x1, int z1) 
+			{ 
+				if(mShouldGenerate)
+				{
+					generateTree(x1, z1 ); 
+				}
+				
+				mShouldGenerate = !mShouldGenerate;
+			}
+		});
 	}
 
 	//--------------------------------------------------------------------------
@@ -188,11 +143,11 @@ public class StructureGenerator implements IWorldGenerator
 	//		Grows a small oak tree at the specified position.
 	//--------------------------------------------------------------------------
 	
-	void generateTree(Random random, int x, int z, World world)
+	void generateTree(int x, int z)
 	{
-		int y = world.getTopSolidOrLiquidBlock(x, z);
-		world.setBlock(x, y, z, 0);
-		mWorldGeneratorTrees.generate(world, random, x, y, z);		
+		int y = mWorld.getTopSolidOrLiquidBlock(x, z);
+		mWorld.setBlock(x, y, z, 0);
+		mWorldGeneratorTrees.generate(mWorld, mRandom, x, y, z);		
 	}
 	
 
@@ -202,11 +157,11 @@ public class StructureGenerator implements IWorldGenerator
 	//		block beneath.
 	//--------------------------------------------------------------------------
 	
-	void generateWoodBase(int x, int y, int z, World world)
+	void generateWoodBase(int x, int y, int z)
 	{
-		if(world.getBlockId(x, y + 1, z) == 17)
+		if(mWorld.getBlockId(x, y + 1, z) == 17)
 		{
-			world.setBlock(x, y, z, 17);
+			mWorld.setBlock(x, y, z, 17);
 		}
 	}
 	
@@ -217,52 +172,52 @@ public class StructureGenerator implements IWorldGenerator
 	//		Oak.
 	//--------------------------------------------------------------------------
 	
-	void generateTreeShrine(Random random, int x, int z, World world)
+	void generateTreeShrine(int x, int z)
 	{	
-		int y = world.getTopSolidOrLiquidBlock(x, z);
-		generateTree(random, x, z, world);
-		generateTree(random, x - 1, z, world);
-		generateTree(random, x, z - 1, world);
-		generateTree(random, x + 1, z, world);
-		generateTree(random, x, z + 1, world);
-		generateTree(random, x - 1, z + 1, world);
-		generateTree(random, x - 1, z - 1, world);
-		generateTree(random, x + 1, z - 1, world);
-		generateTree(random, x + 1, z + 1, world);
+		int y = mWorld.getTopSolidOrLiquidBlock(x, z);
+		generateTree(x, z);
+		generateTree(x - 1, z);
+		generateTree(x, z - 1);
+		generateTree(x + 1, z);
+		generateTree(x, z + 1);
+		generateTree(x - 1, z + 1);
+		generateTree(x - 1, z - 1);
+		generateTree(x + 1, z - 1);
+		generateTree(x + 1, z + 1);
 
-		generateWoodBase(x, y - 1, z, world);
-		generateWoodBase(x, y - 1, z + 1, world);
-		generateWoodBase(x, y - 1, z - 1, world);
-		generateWoodBase(x + 1, y - 1, z, world);
-		generateWoodBase(x + 1, y - 1, z + 1, world);
-		generateWoodBase(x + 1, y - 1, z - 1, world);
-		generateWoodBase(x - 1, y - 1, z, world);
-		generateWoodBase(x - 1, y - 1, z + 1, world);
-		generateWoodBase(x - 1, y - 1, z - 1, world);
+		generateWoodBase(x, y - 1, z);
+		generateWoodBase(x, y - 1, z + 1);
+		generateWoodBase(x, y - 1, z - 1);
+		generateWoodBase(x + 1, y - 1, z);
+		generateWoodBase(x + 1, y - 1, z + 1);
+		generateWoodBase(x + 1, y - 1, z - 1);
+		generateWoodBase(x - 1, y - 1, z);
+		generateWoodBase(x - 1, y - 1, z + 1);
+		generateWoodBase(x - 1, y - 1, z - 1);
 
-		world.setBlock(x, y + 1, z, 0);
-		world.setBlock(x, y, z, 0);
+		mWorld.setBlock(x, y + 1, z, 0);
+		mWorld.setBlock(x, y, z, 0);
 		
-		switch(random.nextInt(4))
+		switch(mRandom.nextInt(4))
 		{
 		case 0:
-			world.setBlock(x, y + 1, z + 1, 0);
-			world.setBlock(x, y, z + 1, 0);
+			mWorld.setBlock(x, y + 1, z + 1, 0);
+			mWorld.setBlock(x, y, z + 1, 0);
 			break;
 			
 		case 1:
-			world.setBlock(x, y + 1, z - 1, 0);
-			world.setBlock(x, y, z - 1, 0);
+			mWorld.setBlock(x, y + 1, z - 1, 0);
+			mWorld.setBlock(x, y, z - 1, 0);
 			break;
 			
 		case 2:
-			world.setBlock(x + 1, y + 1, z, 0);
-			world.setBlock(x + 1, y, z, 0);
+			mWorld.setBlock(x + 1, y + 1, z, 0);
+			mWorld.setBlock(x + 1, y, z, 0);
 			break;
 			
 		case 3:
-			world.setBlock(x - 1, y + 1, z, 0);
-			world.setBlock(x - 1, y, z, 0);
+			mWorld.setBlock(x - 1, y + 1, z, 0);
+			mWorld.setBlock(x - 1, y, z, 0);
 			break;		
 		}
 	}
@@ -272,10 +227,10 @@ public class StructureGenerator implements IWorldGenerator
 	//		Generates a tree shrine surrounded by a stone circle.
 	//--------------------------------------------------------------------------
 	
-	void generateOakShrine(Random random, int x, int z, World world)
+	void generateOakShrine(int x, int z)
 	{
-		generateStoneCircle(random, x, z, world);
-		generateTreeShrine(random, x, z, world);
+		generateStoneCircle(x, z);
+		generateTreeShrine(x, z);
 	}
 	
 	//--------------------------------------------------------------------------
@@ -284,48 +239,48 @@ public class StructureGenerator implements IWorldGenerator
 	//		possibility of some stone circles.
 	//--------------------------------------------------------------------------
 	
-	void generateOakTemple(Random random, int x, int z, World world)
+	void generateOakTemple(int x, int z)
 	{		
-		int numStoneCircles = random.nextInt(3);
+		int numStoneCircles = mRandom.nextInt(3);
 		for(int i = 0; i < numStoneCircles; ++i)
 		{
-			switch(random.nextInt(8))
+			switch(mRandom.nextInt(8))
 			{
 			case 0:
-				generateStoneCircle(random, x + 18, z, world);
+				generateStoneCircle(x + 18, z);
 				break;
 				
 			case 1:
-				generateStoneCircle(random, x - 18, z, world);
+				generateStoneCircle(x - 18, z);
 				break;
 				
 			case 2:
-				generateStoneCircle(random, x, z + 18, world);
+				generateStoneCircle(x, z + 18);
 				break;
 				
 			case 3:
-				generateStoneCircle(random, x, z - 18, world);
+				generateStoneCircle(x, z - 18);
 				break;
 				
 			case 4:
-				generateStoneCircle(random, x + 12, z + 13, world);
+				generateStoneCircle(x + 12, z + 13);
 				break;
 				
 			case 5:
-				generateStoneCircle(random, x + 12, z - 13, world);
+				generateStoneCircle(x + 12, z - 13);
 				break;
 				
 			case 6:
-				generateStoneCircle(random, x - 12, z + 13, world);
+				generateStoneCircle(x - 12, z + 13);
 				break;
 				
 			case 7:
-				generateStoneCircle(random, x - 12, z - 13, world);
+				generateStoneCircle(x - 12, z - 13);
 				break;
 			}
 			
-			generateTreeCircle(random, x, z, world);
-			generateTreeShrine(random, x, z, world);
+			generateTreeCircle(x, z);
+			generateTreeShrine(x, z);
 		}
 	}
 	
@@ -335,15 +290,15 @@ public class StructureGenerator implements IWorldGenerator
 	//		create clearings for the Oak shrines and temples.
 	//--------------------------------------------------------------------------
 	
-	void removeWood(int x, int z, World world)
+	void removeWood(int x, int z)
 	{
-		int y = world.getHeightValue(x, z) - 1;
-		while(world.getBlockId(x, y, z) == 17 ||
-			  world.getBlockId(x, y, z) == 18)
+		int y = mWorld.getHeightValue(x, z) - 1;
+		while(mWorld.getBlockId(x, y, z) == 17 ||
+			  mWorld.getBlockId(x, y, z) == 18)
 		{
-			if(world.getBlockId(x, y, z) == 17)
+			if(mWorld.getBlockId(x, y, z) == 17)
 			{
-				world.setBlock(x, y, z, 0);
+				mWorld.setBlock(x, y, z, 0);
 			}
 			
 			--y;
@@ -356,23 +311,21 @@ public class StructureGenerator implements IWorldGenerator
 	//		clearing which we can then place our shrines/temples inside. 
 	//--------------------------------------------------------------------------
 	
-	void clearTrees(int x, int z, int radius, World world)
+	void clearTrees(int x, int z, int radius)
 	{
-		int radiusSquared = radius * radius;
-		for(int i = radius * -1; i <= radius; ++i)
-		{
-			for(int j = radius * -1; j <= radius; ++j)
-			{
-				if(((i * i) + (j * j)) <= radiusSquared)
-				{
-					removeWood(x + i, z + j, world);
-				}
+		Circle.generateFilled(x, z, radius, new GenerateBlock() 
+		{ 
+			public void Call(int x1, int z1) 
+			{ 
+				removeWood(x1, z1 ); 
 			}
-		}
+		});
 	}
 	
 	//	Our tree generator
 	private WorldGenTrees mWorldGeneratorTrees;
+	private Random mRandom;
+	private World mWorld;
 	
 	private HashSet<String> mOakShrineBiomes = new HashSet<String>();
 	private HashSet<String> mOakTempleBiomes = new HashSet<String>();
