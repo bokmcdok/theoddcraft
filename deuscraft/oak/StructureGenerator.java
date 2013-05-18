@@ -105,7 +105,7 @@ public class StructureGenerator implements IWorldGenerator
 	{
 		clearTrees(x, z, 10);
 		
-		Circle.generate(x, z, 7, new GenerateBlock() 
+		Circle.generate(x, z, 9, new GenerateBlock() 
 		{ 
 			public void Call(int x1, int z1) 
 			{ 
@@ -121,22 +121,38 @@ public class StructureGenerator implements IWorldGenerator
 	
 	void generateTreeCircle(int x, int z)
 	{
-		clearTrees(x, z, 15);
+		clearTrees(x, z, 17);
 
-		Circle.generate(x, z, 10, new GenerateBlock() 
-		{ 
-			private boolean mShouldGenerate = false;
-			public void Call(int x1, int z1) 
-			{ 
-				if(mShouldGenerate)
-				{
-					generateTree(x1, z1 ); 
-				}
-				
-				mShouldGenerate = !mShouldGenerate;
-			}
-		});
+		generateTree(x - 10, z);
+		generateTree(x - 10, z - 2);
+		generateTree(x - 9, z - 4);
+		generateTree(x - 8, z - 6);
+		generateTree(x - 6, z - 8);
+		generateTree(x - 4, z - 9);
+		generateTree(x - 2, z - 10);
+		generateTree(x, z - 10);
+		generateTree(x + 2, z - 10);
+		generateTree(x + 4, z - 9);
+		generateTree(x + 6, z - 8);
+		generateTree(x + 8, z - 6);
+		generateTree(x + 9, z - 4);
+		generateTree(x + 10, z - 2);
+		generateTree(x + 10, z);
+		generateTree(x - 10, z + 2);
+		generateTree(x - 9, z + 4);
+		generateTree(x - 8, z + 6);
+		generateTree(x - 6, z + 8);
+		generateTree(x - 4, z + 9);
+		generateTree(x - 2, z + 10);
+		generateTree(x, z + 10);
+		generateTree(x + 2, z + 10);
+		generateTree(x + 4, z + 9);
+		generateTree(x + 6, z + 8);
+		generateTree(x + 8, z + 6);
+		generateTree(x + 9, z + 4);
+		generateTree(x + 10, z + 2);
 	}
+
 
 	//--------------------------------------------------------------------------
 	//	Generate Tree
@@ -293,6 +309,7 @@ public class StructureGenerator implements IWorldGenerator
 	void removeWood(int x, int z)
 	{
 		int y = mWorld.getHeightValue(x, z) - 1;
+		
 		while(mWorld.getBlockId(x, y, z) == 17 ||
 			  mWorld.getBlockId(x, y, z) == 18)
 		{
