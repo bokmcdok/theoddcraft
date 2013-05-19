@@ -46,7 +46,6 @@ public class StructureGenerator implements IWorldGenerator
 		{
 			int x = chunkX * 16 + mRandom.nextInt(16);
 			int z = chunkZ * 16 + mRandom.nextInt(16);
-			
 			BiomeGenBase biome = mWorld.getBiomeGenForCoords(x, z);
 			
 			//	Plains, Extreme Hills and Swampland
@@ -105,9 +104,9 @@ public class StructureGenerator implements IWorldGenerator
 	{
 		clearTrees(x, z, 10);
 		
-		Circle.generate(x, z, 9, new GenerateBlock() 
+		Circle.generate(x, z, 9, new CircleCallback() 
 		{ 
-			public void Call(int x1, int z1) 
+			public void call(int x1, int z1) 
 			{ 
 				generateRandomStone(x1, z1 ); 
 			}
@@ -330,9 +329,9 @@ public class StructureGenerator implements IWorldGenerator
 	
 	void clearTrees(int x, int z, int radius)
 	{
-		Circle.generateFilled(x, z, radius, new GenerateBlock() 
+		Circle.generateFilled(x, z, radius, new CircleCallback() 
 		{ 
-			public void Call(int x1, int z1) 
+			public void call(int x1, int z1) 
 			{ 
 				removeWood(x1, z1 ); 
 			}

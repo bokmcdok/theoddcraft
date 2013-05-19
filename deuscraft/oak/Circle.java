@@ -10,20 +10,20 @@ import java.util.Random;
 import net.minecraft.world.World;
 
 //--------------------------------------------------------------------------
-//	Generate Block
+//	Circle Callback
 //		A callable interface passed into the generate functions that tells
 //		the circle generator what we want to generate at each point.
 //--------------------------------------------------------------------------
 
-interface GenerateBlock 
+interface CircleCallback 
 {
-	public void Call(int x1, int z1);
+	public void call(int x1, int z1);
 }
 
 public class Circle 
 {
 	//--------------------------------------------------------------------------
-	//	Generate Block
+	//	Generate 
 	//		Generates an unfilled circle in the x/z axis of the specified 
 	//		radius.
 	//
@@ -40,7 +40,7 @@ public class Circle
 	//		});
 	//--------------------------------------------------------------------------
 	
-	public static void generate(int x0, int z0, int radius, GenerateBlock callback)
+	public static void generate(int x0, int z0, int radius, CircleCallback callback)
 	{
 		int error = -radius;
 		int x = radius;
@@ -75,7 +75,7 @@ public class Circle
 	//		point inside the circle as well.  Usage is the same as for generate.
 	//--------------------------------------------------------------------------
 	
-	public static void generateFilled(int x0, int z0, int radius, GenerateBlock callback)
+	public static void generateFilled(int x0, int z0, int radius, CircleCallback callback)
 	{
 		int error = -radius;
 		int x = radius;
@@ -109,22 +109,22 @@ public class Circle
 	//		Generates up to 4 blocks at each side of the circle.
 	//--------------------------------------------------------------------------
 	
-	private static void generateBlocks(int x0, int z0, int x, int z, GenerateBlock callback)
+	private static void generateBlocks(int x0, int z0, int x, int z, CircleCallback callback)
 	{
-	    callback.Call(x0 + x, z0 + z);
+	    callback.call(x0 + x, z0 + z);
 		if (x != 0) 
 		{
-			callback.Call(x0 - x, z0 + z);
+			callback.call(x0 - x, z0 + z);
 		}
 		
 		if (z != 0)
 		{
-			callback.Call(x0 + x, z0 - z);
+			callback.call(x0 + x, z0 - z);
 		}
 		
 		if (x != 0 && z != 0) 
 		{
-			callback.Call(x0 - x, z0 - z);
+			callback.call(x0 - x, z0 - z);
 		}
 	}
 	
@@ -133,7 +133,7 @@ public class Circle
 	//		Generates up to 2 lines to fill the circle.
 	//--------------------------------------------------------------------------
 	
-	private static void generateLines(int x0, int z0, int x, int z, GenerateBlock callback)
+	private static void generateLines(int x0, int z0, int x, int z, CircleCallback callback)
 	{
 		line(x0 - x, z0 + z, x0 + x, callback);
 		if(x!= 0 && z != 0)
@@ -147,11 +147,11 @@ public class Circle
 	//		Only draws lines along the x-axis.
 	//--------------------------------------------------------------------------
 	
-	private static void line(int x0, int z0, int x1, GenerateBlock callback)
+	private static void line(int x0, int z0, int x1, CircleCallback callback)
     {
         for (int x = x0; x <= x1; ++x)
         {
-            callback.Call(x, z0);
+            callback.call(x, z0);
         }
     }
 }
