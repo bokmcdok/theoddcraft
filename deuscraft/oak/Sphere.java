@@ -94,7 +94,7 @@ public class Sphere
 			}
 			else
 			{
-				Circle.generate(0, 100, z1 - mZ0, new CircleCallback()
+				Circle.generate(0, mY0, z1 - mZ0, new CircleCallback()
 				{
 					public void call(int x2, int y2)
 					{
